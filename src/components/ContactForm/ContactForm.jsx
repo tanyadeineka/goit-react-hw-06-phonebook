@@ -1,26 +1,32 @@
-import propTypes from 'prop-types';
 import css from "./ContactForm.module.css";
 import { useState } from "react";
+import { useDispatch } from 'react-redux';
+import { addContact } from "redux/contactsSlice";
 
-export const ContactForm = ({ handleSubmit }) => {
+export const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const handleChangeName = event => {
-    const { value } = event.target;
-    setName(value);
-  };
+  const dispatch = useDispatch();
 
-  const handleChangeNumber = event => {
-    const { value } = event.target;
-    setNumber(value);
-  };
-    
   const handleFormSubmit = event => {
     event.preventDefault();
-    const form = event.currentTarget;
-    handleSubmit({ name: name, number: number });
-    form.reset();
+    dispatch(addContact({ name, number }));
+    event.target.reset();
+  };
+
+  const handleChange = event => {
+    const { name, value } = event.currentTarget;
+        switch (name) {
+            case "name":
+                setName(value)
+                break;
+            case "number":
+                setNumber(value)
+                break;
+            default:
+                return;
+         }
   };
 
   return (
@@ -34,7 +40,7 @@ export const ContactForm = ({ handleSubmit }) => {
         title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
         required
         value={name}
-        onChange={handleChangeName}
+        onChange={handleChange}
       />
       <label className={css.labelForm}>Number</label>
       <input
@@ -45,7 +51,7 @@ export const ContactForm = ({ handleSubmit }) => {
         title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
         required
         value={number}
-        onChange={handleChangeNumber}
+        onChange={handleChange}
       />
       <button type="submit" className={css.formBtn}>
         Add contact
@@ -53,7 +59,3 @@ export const ContactForm = ({ handleSubmit }) => {
     </form>
   );
 }  
-
-ContactForm.propTypes = {
-    handleSubmit: propTypes.func.isRequired,
-}
